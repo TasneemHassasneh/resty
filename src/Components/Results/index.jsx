@@ -1,10 +1,15 @@
 
+import './Results.scss';
 
-const Results = ({ data }) => {
+const Results = ({ loading, responseData }) => {
   return (
-    <section>
-      <pre>{data ? JSON.stringify(data, undefined, 2) : null}</pre>
-    </section>
+    <div className="Results">
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <pre>{responseData ? JSON.stringify(responseData, null, 2) : null}</pre>
+      )}
+    </div>
   );
 };
 
