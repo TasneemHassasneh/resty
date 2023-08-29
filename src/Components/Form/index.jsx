@@ -1,32 +1,24 @@
+import  { useState } from 'react';
 import './Form.scss';
 
-const Form = ({ requestData, setRequestData, handleApiCall }) => {
-  const { method, url, requestBody } = requestData;
+const Form = ({ handleApiCall }) => {
+  const [url, setUrl] = useState('');
+  const [method, setMethod] = useState('GET');
+  const [requestBody, setRequestBody] = useState('');
 
-  const handleMethodChange = (event) => {
-    setRequestData({
-      ...requestData,
-      method: event.target.value,
-    });
-  };
-
-  const handleUrlChange = (event) => {
-    setRequestData({
-      ...requestData,
-      url: event.target.value,
-    });
-  };
-
-  const handleRequestBodyChange = (event) => {
-    setRequestData({
-      ...requestData,
-      requestBody: event.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleApiCall();
+
+    try {
+      const responseData = await handleApiCall(url, method, requestBody);
+    } catch (error) {
+      console.error('API request error:', error);
+    }
+  };
+
+  const handleMethodChange = (e) => {
+    setMethod(e.target.value);
+    setRequestBody('');
   };
 
   return (
@@ -36,7 +28,7 @@ const Form = ({ requestData, setRequestData, handleApiCall }) => {
         <input
           type="text"
           value={url}
-          onChange={handleUrlChange}
+          onChange={(e) => setUrl(e.target.value)}
           required
         />
       </label>
@@ -49,15 +41,15 @@ const Form = ({ requestData, setRequestData, handleApiCall }) => {
           <option value="DELETE">DELETE</option>
         </select>
       </label>
-      {method === 'POST' || method === 'PUT' ? (
+      {(method === 'POST' || method === 'PUT') && (
         <label>
           Request Body (JSON):
           <textarea
             value={requestBody}
-            onChange={handleRequestBodyChange}
+            onChange={(e) => setRequestBody(e.target.value)}
           />
         </label>
-      ) : null}
+      )}
       <button type="submit">Go!</button>
     </form>
   );
